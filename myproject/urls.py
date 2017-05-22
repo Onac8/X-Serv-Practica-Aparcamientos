@@ -10,7 +10,8 @@ urlpatterns = [
     url(r'^$', views.home, name="Pagina Principal"),
     url(r'^login', views.loginPS, name="Pagina de entrada a PS"),
     url(r'^logout', views.logoutPS, name="Pagina de desconexion de PS"),
-
-    #url(r'^annotated/(.+)', views.template, name="Pagina del recurso con template"),
-    #url(r'^(.+)', views.resource, name="Pagina del recurso"),
+    url(r'^aparcamientos$', views.aparcamientosPS, name="Pagina con todos los aparcamientos"),
+    url(r'^aparcamientos/(\w+)', views.infoAparcamiento, name="Muestra todos los datos de un Parking"),
+    url(r'^about$', views.aboutPS, name="Pagina de ayuda"),
+    url(r'^(.+)', views.gestionUsuario, name="Pagina personal de login users"),
 ]

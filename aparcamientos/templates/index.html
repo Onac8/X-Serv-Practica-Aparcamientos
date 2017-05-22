@@ -37,186 +37,34 @@
         </div> <!-- form -->
     </div> <!-- /header -->
 
+
+
      <!-- Main menu (tabs) -->
      <div id="tabs" class="noprint">
-
-            <h3 class="noscreen">Navigation</h3>
-            <ul class="box">
-                <li><a href="#">TODOS<span class="tab-l"></span><span class="tab-r"></span></a></li>
-                <li id="active"><a href="#">??<span class="tab-l"></span><span class="tab-r"></span></a></li> <!-- Active -->
-                <li><a href="#">ABOUT<span class="tab-l"></span><span class="tab-r"></span></a></li>
-                <li><a href="#">Photos<span class="tab-l"></span><span class="tab-r"></span></a></li>
-                <li><a href="#">Portfolio<span class="tab-l"></span><span class="tab-r"></span></a></li>
-                <li><a href="#">Contact<span class="tab-l"></span><span class="tab-r"></span></a></li>
-                <li><a href="#">Links<span class="tab-l"></span><span class="tab-r"></span></a></li>
-            </ul>
-
-        <hr class="noscreen" />
+       <h3 class="noscreen">Navigation</h3>
+       <ul class="box">
+         {% for link in links %}
+            <li>{{link|safe}}<span class="tab-l"></span><span class="tab-r"></span></li>
+            <!-- Active <li id="active"><a href="#">??<span class="tab-l"></span><span class="tab-r"></span></a></li> -->
+         {% endfor %}
+       </ul>
+       <hr class="noscreen" />
      </div> <!-- /tabs -->
+
 
     <!-- Page (2 columns) -->
     <div id="page" class="box">
     <div id="page-in" class="box">
-
-
-
-        <!-- STRIP (you are here  /home/loquesea + rss enlaces) -->
-
+      <!-- STRIP (you are here  /home/loquesea + rss enlaces) -->
 
         <!-- Content -->
         <div id="content">
-
-            <!-- Article -->
-            <div class="article">
-                <h2><span><a href="#">This is my best article</a></span></h2>
-                <p class="info noprint">
-                    <span class="date">2007-01-01 @ 00:01</span><span class="noscreen">,</span>
-                    <span class="cat"><a href="#">Category</a></span><span class="noscreen">,</span>
-                    <span class="user"><a href="#">My name</a></span><span class="noscreen">,</span>
-                    <span class="comments"><a href="#">Comments</a></span>
-                </p>
-
-                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam pellentesque enim blandit enim bibendum blandit.
-                Integer eu leo ac est aliquet imperdiet. Quisque nec justo id augue posuere malesuada. Nullam ac metus. Cras non leo
-                ut est placerat condimentum. Aliquam ut enim. Quisque non sapien in enim eleifend faucibus. Pellentesque sodales. Mauris
-                auctor arcu sit amet felis. Donec eget enim ut lacus pharetra condimentum. Nulla in felis vel tortor imperdiet consectetuer.
-                Sed id ante.</p>
-
-                <p class="btn-more box noprint"><strong><a href="#">Continue</a></strong></p>
-            </div> <!-- /article -->
-
-            <hr class="noscreen" />
-
-            <!-- Article -->
-            <div class="article">
-                <h2><span><a href="#">This is my third article</a></span></h2>
-                <p class="info noprint">
-                    <span class="date">2007-01-01 @ 00:01</span><span class="noscreen">,</span>
-                    <span class="cat"><a href="#">Category</a></span><span class="noscreen">,</span>
-                    <span class="user"><a href="#">My name</a></span><span class="noscreen">,</span>
-                    <span class="comments"><a href="#">Comments</a></span>
-                </p>
-
-                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam pellentesque enim blandit enim bibendum blandit.
-                Integer eu leo ac est aliquet imperdiet. Quisque nec justo id augue posuere malesuada. Nullam ac metus. Cras non leo
-                ut est placerat condimentum. Aliquam ut enim. Quisque non sapien in enim eleifend faucibus. Pellentesque sodales. Mauris
-                auctor arcu sit amet felis. Donec eget enim ut lacus pharetra condimentum. Nulla in felis vel tortor imperdiet consectetuer.
-                Sed id ante.</p>
-
-                <p class="btn-more box noprint"><strong><a href="#">Continue</a></strong></p>
-            </div> <!-- /article -->
-
-            <hr class="noscreen" />
-
-            <!-- Article -->
-            <div class="article">
-                <h2><span><a href="#">This is my second article</a></span></h2>
-                <p class="info noprint">
-                    <span class="date">2007-01-01 @ 00:01</span><span class="noscreen">,</span>
-                    <span class="cat"><a href="#">Category</a></span><span class="noscreen">,</span>
-                    <span class="user"><a href="#">My name</a></span><span class="noscreen">,</span>
-                    <span class="comments"><a href="#">Comments</a></span>
-                </p>
-
-                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam pellentesque enim blandit enim bibendum blandit.
-                Integer eu leo ac est aliquet imperdiet. Quisque nec justo id augue posuere malesuada. Nullam ac metus. Cras non leo
-                ut est placerat condimentum. Aliquam ut enim. Quisque non sapien in enim eleifend faucibus. Pellentesque sodales. Mauris
-                auctor arcu sit amet felis. Donec eget enim ut lacus pharetra condimentum. Nulla in felis vel tortor imperdiet consectetuer.
-                Sed id ante.</p>
-
-                <p class="btn-more box noprint"><strong><a href="#">Continue</a></strong></p>
-            </div> <!-- /article -->
-
-            <hr class="noscreen" />
-
-            <!-- Article -->
-            <div class="article">
-                <h2><span><a href="#">This is my first article</a></span></h2>
-                <p class="info noprint">
-                    <span class="date">2007-01-01 @ 00:01</span><span class="noscreen">,</span>
-                    <span class="cat"><a href="#">Category</a></span><span class="noscreen">,</span>
-                    <span class="user"><a href="#">My name</a></span><span class="noscreen">,</span>
-                    <span class="comments"><a href="#">Comments</a></span>
-                </p>
-
-                <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam pellentesque enim blandit enim bibendum blandit.
-                Integer eu leo ac est aliquet imperdiet. Quisque nec justo id augue posuere malesuada. Nullam ac metus. Cras non leo
-                ut est placerat condimentum. Aliquam ut enim. Quisque non sapien in enim eleifend faucibus. Pellentesque sodales. Mauris
-                auctor arcu sit amet felis. Donec eget enim ut lacus pharetra condimentum. Nulla in felis vel tortor imperdiet consectetuer.
-                Sed id ante.</p>
-
-                <p class="btn-more box noprint"><strong><a href="#">Continue</a></strong></p>
-            </div> <!-- /article -->
-
-            <hr class="noscreen" />
-
+          {% block content %}{% endblock %}
         </div> <!-- /content -->
 
         <!-- Right column -->
         <div id="col" class="noprint">
-            <div id="col-in">
-
-                <!-- About Me -->
-                <h3><span><a href="#">About Me</a></span></h3>
-
-                <div id="about-me">
-                    <p><img src="{% static "images/tmp_photo.gif" %}" id="me" alt="Yeah, it´s me!" />
-                    <strong>John Doe</strong><br />
-                    Age: 26<br />
-                    Dallas, TX<br />
-                    <a href="#">Profile on MySpace</a></p>
-                </div> <!-- /about-me -->
-
-                <hr class="noscreen" />
-
-                <!-- Category -->
-                <h3 ><span>Category</span></h3>
-
-                <ul id="category">
-                    <li id="category-active"><a href="#">Selected category</a></li> <!-- Active -->
-                    <li><a href="#">Category</a></li>
-                    <li><a href="#">Category</a></li>
-                    <li><a href="#">Category</a></li>
-                    <li><a href="#">Category</a></li>
-                </ul>
-
-                <hr class="noscreen" />
-
-                <!-- Archive -->
-                <h3><span>Archive</span></h3>
-
-                <ul id="archive">
-                   <li><a href="#">January 2007</a></li>
-                    <li><a href="#">December 2006</a></li>
-                    <li><a href="#">November 2006</a></li>
-                    <li><a href="#">October 2006</a></li>
-                    <li><a href="#">September 2006</a></li>
-                    <li id="archive-active"><a href="#">August 2006</a></li> <!-- Active -->
-                    <li><a href="#">July 2006</a></li>
-                    <li><a href="#">June 2006</a></li>
-                    <li><a href="#">May 2006</a></li>
-                    <li><a href="#">April 2006</a></li>
-                    <li><a href="#">March 2006</a></li>
-                    <li><a href="#">February 2006</a></li>
-                    <li><a href="#">January 2006</a></li>
-                </ul>
-
-                <hr class="noscreen" />
-
-                <!-- Links -->
-                <h3><span>Links</span></h3>
-
-                <ul id="links">
-                    <li><a href="#">Something</a></li>
-                    <li><a href="#">Something</a></li>
-                    <li><a href="#">Something</a></li>
-                    <li><a href="#">Something</a></li>
-                    <li><a href="#">Something</a></li>
-                </ul>
-
-                <hr class="noscreen" />
-
-            </div> <!-- /col-in -->
+          {% block datos %}{% endblock %}
         </div> <!-- /col -->
 
     </div> <!-- /page-in -->
@@ -224,15 +72,16 @@
 
     <!-- Footer -->
     <div id="footer">
-        <div id="top" class="noprint"><p><span class="noscreen">Back on top</span> <a href="#header" title="Back on top ^">^<span></span></a></p></div>
         <hr class="noscreen" />
 				<p id="copyright" >Esta aplicación utiliza datos abiertos de la ciudad de Madrid</p>
-				<p id="copyright2"> Copyright &copy; 2017 <a href="http://datos.madrid.es/portal/site/egob/menuitem.c05c1f754a33a9fbe4b2e4b284f1a5a0/?vgnextoid=e84276ac109d3410VgnVCM2000000c205a0aRCRD&vgnextchannel=374512b9ace9f310VgnVCM100000171f5a0aRCRD&vgnextfmt=default">Aparcamientos Comunidad de Madrid</a></p>
-        <p id="copyright3"> &copy;* <a href="http://datos.munimadrid.es/portal/site/egob/menuitem.ac61933d6ee3c31cae77ae7784f1a5a0/?vgnextoid=00149033f2201410VgnVCM100000171f5a0aRCRD&format=xml&file=0&filename=202584-0-aparcamientos-residentes&mgmtid=e84276ac109d3410VgnVCM2000000c205a0aRCRD&preview=full">Versión XML</a></p>
-        <p id="createdby">created by <a href="http://www.nuvio.cz">Nuvio | Webimages</a> <!-- DON´T REMOVE, PLEASE! --></p>
+				<p id="copyright2">
+          Copyright &copy; 2017
+          <a href="http://datos.madrid.es/portal/site/egob/menuitem.c05c1f754a33a9fbe4b2e4b284f1a5a0/?vgnextoid=e84276ac109d3410VgnVCM2000000c205a0aRCRD&vgnextchannel=374512b9ace9f310VgnVCM100000171f5a0aRCRD&vgnextfmt=default">Aparcamientos Comunidad de Madrid</a>
+          <a href="http://datos.munimadrid.es/portal/site/egob/menuitem.ac61933d6ee3c31cae77ae7784f1a5a0/?vgnextoid=00149033f2201410VgnVCM100000171f5a0aRCRD&format=xml&file=0&filename=202584-0-aparcamientos-residentes&mgmtid=e84276ac109d3410VgnVCM2000000c205a0aRCRD&preview=full">Versión XML</a>
+        </p>
     </div> <!-- /footer -->
 
-</div> <!-- /main -->
 
+</div> <!-- /main -->
 </body>
 </html>

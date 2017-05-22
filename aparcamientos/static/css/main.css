@@ -34,7 +34,7 @@ tr {display:table-row;}
 th, td {display: table-cell; border:1px solid #B7CAF6; margin:0; padding:5px; vertical-align:top; text-align:left;}
 th {background:#E7ECFD; text-align:center; color:#192666; font-weight:bold;}
 
-ul, ol {display:block; border:0; margin:15px 0 15px 40px; padding:0;}
+
 ol {list-style-type:decimal;}
 li {display:list-item; border:0; margin:0; padding:0; _height:1px;}
 ul ul, ul ol, ol ol, ol ul {margin: 0 0 0 20px;}
@@ -144,6 +144,8 @@ code, kbd, samp {font-family:monospace; font-size:110%;}
     #content .article h2 {margin:0 -20px; padding:10px; background:#DEE5FD url("../images/content_title_bg.gif") 0 0 repeat-y; color:#192666;}
     #content .article h2 span {background:url("../images/ico_list.gif") 0 50% no-repeat; padding-left:25px;}
 
+    #content .about p {text-align:justify; margin-left:10px; margin-right: 30px; }
+
     #content .article p {text-align:justify;}
     #content .info {margin:10px 0; padding-bottom:8px; border-bottom:1px solid #DEE5FD; color:#6685CC;}
     #content .info a {color:#6685CC;}
@@ -175,7 +177,7 @@ code, kbd, samp {font-family:monospace; font-size:110%;}
     #col ul#category li {margin:0; padding:0; border-bottom:1px solid #E0E8FA;}
     #col ul#category li a {display:block; padding:3px 0 3px 22px; background:url("../images/ico_archive.gif") 5px 6px no-repeat; text-decoration:none;}
     #col ul#category li a:hover {background-color:#D3DFF8; color:#192666;}
-    #col ul#category li#category-active a {background:#E0E8FA url("../images/ico_archive2.gif") 5px 50% no-repeat; font-weight:bold;}
+    #col ul#category li#category-active {background:#E0E8FA url("../images/ico_archive2.gif") 5px 50% no-repeat; font-weight:bold;}
 
     /* Right column - Archive */
     #col ul#archive {margin:15px 0; padding:0; list-style:none;}
