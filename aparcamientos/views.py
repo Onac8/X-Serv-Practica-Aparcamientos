@@ -78,22 +78,6 @@ def texto(tipo): #funcion que sirve diferentes tipos de titulos o contenidos
     elif (tipo == "no_parks"):
         return "No hay Aparcamientos en la base de datos. CaRGALOS"
 
-    elif (tipo == "about"):
-        return "<p>¿Que es Parking Simulator [PS]?<p>"\
-        + "<p>En esta página podrás seleccionar aparcamientos de la base de datos de la Comunidad de Madrid.</p>" \
-        + "<p>Para ello, simplemente debes loguearte en la página mediante nuestro sencillo formulario. Una vez hecho, "\
-        + "dispondrás de una página personal, donde se encontrarán tus aparcamientos seleccionados. Estos los podrás seleccionar" \
-        + "sencillamente pulsando el boton 'ADD' que está situado al lado de cada aparcamiento. Se podrá obtener mas informacion " \
-        + "de cada aparcamiento pulsando sobre su enlace 'mas info...'." \
-        + "<p>Segun entramos en la pagina, podemos apreciar podremos distinguir un banner, un menu que nos llevara a 'TODOS los" \
-        + "aparcamientos' o a este recurso 'ABOUT'. La página nos dará la opcion de descargar todos los aparcamientos del XML de " \
-        + "la Comunidad de Madrid. </p>" \
-        + "<p>Ademas, si estas logueado, se permite comentar cada aparcamiento (indicando por ejemplo que te pareció espacioso, "\
-        + "bien posicionado, etc.). Los aparcamientos apareceran en la pagina principal filtrados por 'mas comentados' o 'accesibles'" \
-        + "segun seleccionemos con el boton situado en la columna lateral.</p>"\
-        + "<p>Ademas, en dicha columna (mas abajo), podremos elegir ver la pagina en formato XML. Y mas abajo, podremos ver las" \
-        + "paginas personales de cada usuario, con enlaces hacia ellas </p>" \
-        + "<p><br><br> DESIGNED BY: Jonathan Cano Picazo (Alias Onac8)</p>"
 #---------------------------------------------------------------------------------------
 
 ########################################################################################
@@ -339,11 +323,9 @@ def infoAparcamiento(request):
 def aboutPS(request): #pagina de informacion/ayuda de PS
     links = linksOther()
     log = logInOut(request)
-    content = texto("about") #contenido (texto) del about
 
     plantilla = get_template("about.html")
-    Context = ({'content': content,
-                'log': log,
+    Context = ({'log': log,
                 'links': links})
     return HttpResponse(plantilla.render(Context))
 #-------------------------------------------------------------------------------------------------
