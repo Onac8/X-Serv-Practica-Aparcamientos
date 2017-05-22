@@ -343,19 +343,11 @@ def loginPS(request):
 
     else: #Nick o pass incorrectos
         log = logError(request) #formulario de error de sign in
-        links = linksHome() #links todos, about
-        boton = form("accesible","","")
-
-        ########################################################
-        ###FALTA METER
-        #CONTENT --> reseteamos y metemos mas comentados.
-        #PANEL LATERAL
-        #ETC
+        links = linksOther() #links Inicio, todos, about
 
         template = get_template("home.html")
         c = Context ({'log': log,
-                      'links': links,
-                      'boton': boton})
+                      'links': links})
         return HttpResponse(template.render(c))
 #-------------------------------------------------------------------------------------------------
 
@@ -368,9 +360,7 @@ def logoutPS(request): #Lo llamo logoutPS, porque si lo llamo logout se lia
 #-------------------------------------------------------------------------------------------------
 @csrf_exempt
 def logError(request): #Nuevo form para login, dado el error de autentificacion
-    log = "<form class='.t-left' action='/login' method='POST'>" \
-        + "<label><strong>Wrong Nick or Pass. Try again</strong><br></label>" \
-        + "NICK:  <input type='text' name='name'><br>" \
-        + "PASS: <input type='password' name='pass'><br> "\
-        + "<input type='submit' value='Submit'></form>"
+    log = "Wrong Nick or Pass. <a href='/'> <strong>Try again</strong> </a>"
+    #implementar pagina de error
+
     return log
