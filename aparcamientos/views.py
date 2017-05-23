@@ -10,7 +10,8 @@ from django.template.loader import get_template
 from django.template import Context
 from django.contrib.auth import logout, authenticate, login
 from django.db import models
-#from urllib.parse import unquote_plus
+from urllib2 import urlopen
+import xml.etree.ElementTree as ET
 
 
 #Listas con enlaces dependiendo de la pagina a servir------------
@@ -66,16 +67,14 @@ def form(tipo, info, info2): #formularios, botones, texto y desplegable
         out = "<form method='POST'><button type='submit' name='boton' value='OBTENER'>Obtener Datos</button></form>"
 
     elif tipo == "nodata":
-        out = "No hay aparcamientos. Pulse sobre el botón 'Obtener datos'"
+        out = []
+        out.append ("No hay aparcamientos. Pulse sobre el botón 'Obtener datos'")
 
     elif tipo == "comentados":
         out = "Aparcamientos mas comentados"
 
     elif tipo == "parkAccesibles":
         out = "Aparcamientos accesibles"
-
-    elif tipo == "no_parks":
-        out = "No hay Aparcamientos en la base de datos. CaRGALOS"
 
     elif tipo == "comentario":
         out = "<form method='POST'> Comentario <br><input type='text' id='Comentarios'  name='Comentario'  ><input type='submit' value='Comentar'></form>"
@@ -125,9 +124,9 @@ def crearPagPersonales(): #crea las paginas personales asociadas a cada usuario 
     if len(pagsPersonalesTot) != len(usersTot):
         for user in usersTot:
             try:
-                user = Personal.objects.get(usuario=user)
+                aux = Personal.objects.get(creador=user)
             except Personal.DoesNotExist:
-                pagPersonal = Personal(usuario=user)
+                pagPersonal = Personal(creador=user)
                 pagPersonal.save()
 
 ##HOME##############################################################################
@@ -142,7 +141,7 @@ def home(request): #pagina principal
         if len(parkings) == 0:
           titulo = ""
           boton = form("getdata", "", "") #boton para bajarse los datos XML
-          content = form("nodata")
+          content = form("nodata","","")
 
         else:
           parkingsOrdenados = parkings.order_by('-numComentarios')[:5] #solo mostramos los 5 primeros
@@ -167,6 +166,7 @@ def home(request): #pagina principal
 
         elif valor == "OBTENER": #Post que nos llega al pulsar boton "Obtener Datos"
             parserXML()
+            return redirect(home)
 
 
     #creamos pagsPersonales cada vez que entremos al home por si hemos añadido
@@ -270,12 +270,13 @@ def gestionUsuario(request, nick): #Pagina a la que nos dirigimos tras hacer /us
                         + "<span class='info'><span class='date'> Fecha Seleccion: " + str(seleccion.fecha) + "</span></span><br><br>")
 
         except User.DoesNotExist: #Error tratado
-            content = "No existe el usuario " + str(nick) + ". Intento de ruptura."
+            content = []
+            content.append ("No existe el usuario " + str(nick) + ". Intento de ruptura.")
             template = get_template('user.html')
             Context = ({'log': logInOut(request),
-                        'enlaces': linksOther(),
+                        'links': linksOther(),
                         'content': content})
-            return HttpResponseNotFound(plantilla.render(Context))
+            return HttpResponseNotFound(template.render(Context))
 
     #-------------------------------------------------------------------------------------------------------
     elif request.method == 'POST': #entramos por "ADD" o por "CAMBIAR TITULO", añadimos PARKING, formamos user.html
@@ -371,6 +372,75 @@ def infoAparcamiento(request, id):
                 'form': formulario,
                 'aparcamiento': aparcamiento})
     return HttpResponse(template.render(Context))
+
+
+#PARSER_XML---------------------------------------------------------------------------------
+@csrf_exempt
+def parserXML():
+    xmlFile = urlopen("http://datos.munimadrid.es/portal/site/egob/menuitem.ac61933d6ee3c31cae77ae7784f1a5a0/?vgnextoid=00149033f2201410VgnVCM100000171f5a0aRCRD&format=xml&file=0&filename=202584-0-aparcamientos-residentes&mgmtid=e84276ac109d3410VgnVCM2000000c205a0aRCRD&preview=full")
+    arbol = ET.parse(xmlFile)
+    raiz = arbol.getroot()
+
+    for elem in arbol.iter():
+        if "ID-ENTIDAD" in elem.attrib.values():   # Es un diccionario
+            pass
+            #nuevoAparcamiento = Aparcamientos(idEntidad=elem.text)
+        elif "NOMBRE" in elem.attrib.values():
+            nuevoAparcamiento = Aparcamientos(nombre=elem.text)
+            nuevoAparcamiento.numComentarios = 0
+            #nuevoAparcamiento.nombre = elem.text
+        elif "DESCRIPCION" in elem.attrib.values():
+            nuevoAparcamiento.descripcion = elem.text
+        elif "ACCESIBILIDAD" in elem.attrib.values():
+            nuevoAparcamiento.accesibilidad = elem.text
+        elif "CONTENT-URL" in elem.attrib.values():
+            nuevoAparcamiento.url = elem.text
+        elif "NOMBRE-VIA" in elem.attrib.values(): #nombre de la calle
+            nombreCalle = elem.text
+            #nuevoAparcamiento.nombreVia = elem.text
+        elif "CLASE-VIAL" in elem.attrib.values(): #calle, avenida, paseo
+            tipoCalle = elem.text
+            #nuevoAparcamiento.claseVial = elem.text
+        elif "TIPO-NUM" in elem.attrib.values():
+            pass
+            #nuevoAparcamiento.tipoNum = elem.text
+        elif "NUM" in elem.attrib.values():
+            pass
+            #nuevoAparcamiento.num = elem.text
+        elif "ORIENTACION" in elem.attrib.values():
+            pass
+            #nuevoAparcamiento.orientacion = elem.text
+        elif "LOCALIDAD" in elem.attrib.values():
+            pass
+            #nuevoAparcamiento.localidad = elem.text
+        elif "PROVINCIA" in elem.attrib.values():
+            pass
+            #nuevoAparcamiento.provincia = elem.text
+        elif "CODIGO-POSTAL" in elem.attrib.values():
+            pass
+            #nuevoAparcamiento.codigoPostal = elem.text
+        elif "BARRIO" in elem.attrib.values():
+            nuevoAparcamiento.barrio = elem.text
+        elif "DISTRITO" in elem.attrib.values():
+            nuevoAparcamiento.distrito = elem.text
+        elif "COORDENADA-X" in elem.attrib.values():
+            pass
+            #nuevoAparcamiento.coordenadaX = elem.text
+        elif "COORDENADA-Y" in elem.attrib.values():
+            pass
+            #nuevoAparcamiento.coordenadaY = elem.text
+        elif "LATITUD" in elem.attrib.values():
+            nuevoAparcamiento.latitud = elem.text
+        elif "LONGITUD" in elem.attrib.values():
+            nuevoAparcamiento.longitud = elem.text
+        elif "TELEFONO" in elem.attrib.values():
+            nuevoAparcamiento.telefono = elem.text
+        elif "EMAIL" in elem.attrib.values():
+            nuevoAparcamiento.email = elem.text
+        elif "TIPO" in elem.attrib.values():
+            nuevoAparcamiento.save()
+        else:
+            pass
 
 
 

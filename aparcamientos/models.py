@@ -10,12 +10,12 @@ class Aparcamientos (models.Model):
     accesibilidad = models.IntegerField()
     direccion = models.CharField(max_length=60)
     barrio = models.CharField(max_length=20)
-    distrito = models.CharField(max_length=20)
-    latitud = models.FloatField()
-    longitud = models.FloatField()
-    numComentarios = models.IntegerField()
-    email = models.CharField(max_length=50, default="something")
-    telefono = models.IntegerField()
+    distrito = models.CharField(max_length=20, blank=True)
+    latitud = models.FloatField(null=True, blank=True)
+    longitud = models.FloatField(null=True, blank=True)
+    numComentarios = models.IntegerField(blank=True, default=0)
+    email = models.CharField(max_length=50, default="No E-Mail")
+    telefono = models.CharField(max_length=40, default="No Tlf")
 
 
 class Comentario(models.Model):
