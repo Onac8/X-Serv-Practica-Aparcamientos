@@ -16,8 +16,16 @@
             <br>
             <li><strong>Tlfno. Contacto: </strong> {{aparcamiento.telefono}}</li>
             <li><strong>Email Contacto: </strong> {{aparcamiento.email}}</li>
-            <br>
+            <br><br>
         </ul>
+
+        <ul>
+        {% for park in content %}
+          <p><strong>Comentario:</strong> {{park|safe}}</p>
+          <br><br>
+        {% endfor %}
+        </ul>
+
     </div>
     <hr class="noscreen" />
   {% endblock content %}
@@ -30,7 +38,7 @@
         <h3><span>{{boton|safe}}</span></h3> <!-- SE IGNORA. NO QUIERO BOTON AQUI -->
 
         <div id="about-me">
-            <p><strong>GET PARKINGS</strong></p>
+            <p><strong>Vista en JSON</strong></p>
             <p>Vista en XML<br></p>
         </div> <!-- /about-me -->
 

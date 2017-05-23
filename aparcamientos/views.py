@@ -247,22 +247,22 @@ def gestionUsuario(request, nick): #Pagina a la que nos dirigimos tras hacer /us
 
 
 
-            aparcamientosTot = Seleccionar.objects.filter(FichaPersonal=paginaPersonalUnica) #Objeto "Personal"
+            aparcamientosTot = Seleccionar.objects.filter(fichaPersonal=paginaPersonalUnica) #Objeto "Personal"
             content = [] #porsiaca! referenciado antes de asignar error posible!!
             for aux in aparcamientosTot:
-                aparcamiento = aux.Aparcamiento #dentro de objeto "Personal", especificamos que queremos un objeto "Aparcamiento"
+                aparcamiento = aux.aparcamiento #dentro de objeto "Personal", especificamos que queremos un objeto "Aparcamiento"
 
-                seleccion = Seleccionar.objects.get(Aparcamiento=aparcamiento,Usuario=userObject)
+                seleccion = Seleccionar.objects.get(aparcamiento=aparcamiento,usuario=userObject)
                 if request.user.is_authenticated():
                     content.append ("<a class='info' href='" + aparcamiento.url + "'> " + aparcamiento.nombre + "</a><br>" \
                         + "Direccion: " + aparcamiento.direccion + "<br>" \
                         + "<a class='info' href='/aparcamientos/" + str(aparcamiento.id) + "'> Mas Info</a><br>" \
-                        + "<span class='info'><span class='date'> Fecha Seleccion: " + str(seleccion.Fecha) + "</span></span><br>")
+                        + "<span class='info'><span class='date'> Fecha Seleccion: " + str(seleccion.fecha) + "</span></span><br><br>")
                 else:
                     content.append("<a class='info' href='" + aparcamiento.url + "'> " + aparcamiento.nombre + "</a><br>" \
                         + "Direccion: " + aparcamiento.direccion + "<br>" \
                         + "<a class='info' href='/aparcamientos/" + str(aparcamiento.id) + "'> Mas Info</a><br>" \
-                        + "<span class='info'><span class='date'> Fecha Seleccion: " + str(seleccion.Fecha) + "</span></span>")
+                        + "<span class='info'><span class='date'> Fecha Seleccion: " + str(seleccion.fecha) + "</span></span><br><br>")
 
         except User.DoesNotExist: #Error tratado
             content = "No existe el usuario " + str(nick) + ". Intento de ruptura."
@@ -274,25 +274,26 @@ def gestionUsuario(request, nick): #Pagina a la que nos dirigimos tras hacer /us
 
     #-------------------------------------------------------------------------------------------------------
     elif request.method == 'POST': #entramos por "ADD" o por "CAMBIAR TITULO", añadimos PARKING, formamos user.html
-        value = request.POST['Titulo']
+        # value = request.POST['Add']
+        # value2 = request.POST['Titulo']
 
-        if value == 'Titulo': #cambiamos titulo de la pagina personal
-            pagina = PaginaPersonal.objects.get(usuario=usuario)
-            pagina.Titulo = value
-            pagina.save()
-
-        elif value == 'Add': #se trata del boton añadir aparcamiento
-            paginaPersonalUnica = Personal.objects.get(usuario=usuario)
-            parking = Aparcamientos.objects.get(id=int(value))
+        if 'Add' in request.POST:
+            paginaPersonalUnica = Personal.objects.get(creador=request.user)
+            parking = Aparcamientos.objects.get(id=int(request.POST['Add']))
             add = True
-            listaParkings = Seleccionar.objects.filter(Usuario=usuario)
+            listaParkings = Seleccionar.objects.filter(usuario=request.user)
             for i in listaParkings:
-                if i.Aparcamiento.nombre == parking.nombre:
+                if i.aparcamiento.nombre == parking.nombre:
                     add = False
                     break
             if add == True:
-                addParking = Seleccionar(Aparcamiento=parking, Usuario=usuario, FichaPersonal=paginaPersonalUnica)
+                addParking = Seleccionar(aparcamiento=parking, usuario=request.user, fichaPersonal=paginaPersonalUnica)
                 addParking.save()
+
+        else : #cambiamos titulo de la pagina personal
+            pagina = Personal.objects.get(creador=request.user)
+            pagina.titulo = request.POST['Titulo']
+            pagina.save()
 
 
         return redirect (gestionUsuario, str(request.user))

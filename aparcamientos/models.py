@@ -28,10 +28,10 @@ class Personal(models.Model):
     titulo = models.CharField(max_length=60)
 
 class Seleccionar (models.Model):
-    Aparcamiento = models.ForeignKey(Aparcamientos)
-    Usuario = models.ForeignKey(User)
-    FichaPersonal = models.ForeignKey(Personal)
-    Fecha = models.DateField(auto_now=True)
+    aparcamiento = models.ForeignKey(Aparcamientos)
+    usuario = models.ForeignKey(User)
+    fichaPersonal = models.ForeignKey(Personal)
+    fecha = models.DateField(auto_now=True)
 
 
 # class Voto(models.Model):
