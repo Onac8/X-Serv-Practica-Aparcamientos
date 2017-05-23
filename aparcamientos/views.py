@@ -14,12 +14,14 @@ from django.db import models
 
 
 #Listas con enlaces dependiendo de la pagina a servir------------
+@csrf_exempt
 def linksHome():
     links = []
     links.append("<a href='/aparcamientos'>TODOS</a>")
     links.append("<a href='/about'>ABOUT</a>")
     return links
 
+@csrf_exempt
 def linksOther():
     links = []
     links.append ("<a href='/'>INICIO</a>")
@@ -76,7 +78,7 @@ def form(tipo, info, info2): #formularios, botones, texto y desplegable
         out = "No hay Aparcamientos en la base de datos. CaRGALOS"
 
     elif tipo == "comentario":
-        out = "<form method='POST'> Comentario <br><input type='text' id='Comentarios'  size=32 name='Comentario'><input type='submit' value='Comentar'></form>"
+        out = "<form method='POST'> Comentario <br><input type='text' id='Comentarios'  name='Comentario'  ><input type='submit' value='Comentar'></form>"
 
     return out
 
@@ -84,6 +86,7 @@ def form(tipo, info, info2): #formularios, botones, texto y desplegable
 
 
 #LISTADOS Y PAGINAS-----------------------------------------------------------------------------------------------
+@csrf_exempt
 def listado(lista, request, nick): #listado con todos los aparcamientos seleccionados por el user
     content = []
     for aux in lista:
@@ -98,6 +101,7 @@ def listado(lista, request, nick): #listado con todos los aparcamientos seleccio
     return content
 #-------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------
+@csrf_exempt
 def paginasUsers ():
     content = []
     totUsers = User.objects.all()
@@ -114,6 +118,7 @@ def paginasUsers ():
 
 
 #CREAR PERSONALES------------------------------------------------------------------------------------
+@csrf_exempt
 def crearPagPersonales(): #crea las paginas personales asociadas a cada usuario registrado
     pagsPersonalesTot = Personal.objects.all()
     usersTot = User.objects.all()
@@ -314,6 +319,7 @@ def gestionUsuario(request, nick): #Pagina a la que nos dirigimos tras hacer /us
 
 
 #PAGINA PERSONAL DE CADA APARCAMIENTO-------------------------------------------------------------
+@csrf_exempt
 def infoAparcamiento(request, id):
 
     if request.method == "GET":
@@ -328,13 +334,13 @@ def infoAparcamiento(request, id):
             return HttpResponseNotFound(template.render(Content))
 
     elif request.method == "POST": #añadimos comentario y sumamos contador
-        comentario = request.POST['texto']
+        comentario = request.POST['Comentario']
 
         aparcamiento = Aparcamientos.objects.get(id=id)
         aparcamiento.numComentarios = aparcamiento.numComentarios + 1
         aparcamiento.save()
 
-        nuevo = Comentarios(Aparcamiento=aparcamiento, Comentario=comentario)
+        nuevo = Comentario(aparcamiento=aparcamiento, texto=comentario)
         nuevo.save()
 
 
@@ -351,10 +357,8 @@ def infoAparcamiento(request, id):
     content=[]
     try:
         comentariosTot = Comentario.objects.filter(aparcamiento=aparcamiento)
-        # htmlComentarios = "<h4 id='comments'><span>Comentarios</span></h4><ul>"
         for aux in comentariosTot:
             content.append(aux.texto)
-            #"<li class='comments'>" + i.Comentario + "</li></ul><br>"
     except Comentario.DoesNotExist:
         content.append  ("No hay comentarios.")
 

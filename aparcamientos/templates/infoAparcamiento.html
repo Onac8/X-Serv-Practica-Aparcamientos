@@ -22,9 +22,11 @@
         <ul>
         {% for park in content %}
           <p><strong>Comentario:</strong> {{park|safe}}</p>
-          <br><br>
+          <br>
         {% endfor %}
         </ul>
+
+        {{form|safe}}
 
     </div>
     <hr class="noscreen" />
