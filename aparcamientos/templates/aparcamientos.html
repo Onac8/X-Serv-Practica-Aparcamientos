@@ -4,7 +4,27 @@
     <!-- PARKINGS ELEGIDOS -->
     <div class="article">
         <h2 class="Aparcamiento"><span>LISTA DE APARCAMIENTOS</span></h2>
-        {{filtro|safe}}
+          <form  id='buscarDistrito' method='POST'> Buscar por Distrito: <select name='Distrito'>
+            <option value='CENTRO'>Centro</option>
+            <option value='CHAMARTIN'>Chamartin</option>
+            <option value='TETUAN'>Tetuan</option>
+            <option value='MONCLOA-ARAVACA'>Moncloa-Aravaca </option>
+            <option value='RETIRO'>Retiro</option>
+            <option value='SALAMANCA'>Salamanca</option>
+            <option value='MORATALAZ'>Moratalaz</option>
+            <option value='CHAMBERI'>Chamberi</option>
+            <option value='SAN BLAS-CANILLEJAS'>San Blas-Canillejas</option>
+            <option value='CIUDAD LINEAL'>Ciudad Lineal</option>
+            <option value='FUENCARRAL-EL PARDO'>Fuencarral-El pardo </option>
+            <option value='ARGANZUELA'>Arganzuela</option>
+            <option value='VILLA DE VALLECAS'>Villa de Vallecas</option>
+            <option value='LATINA'>Latina</option>
+            <option value='HORTALEZA'>Hortaleza</option>
+            <option value='PUENTE DE VALLECAS'>Puente de Vallecas</option>
+            <option value='CARABANCHEL'>Carabanchel</option>
+            <option value='VILLAVERDE'>Villaverde</option>
+            <option value='BARAJAS'>Barajas</option></select>
+            <input type='submit' value='Filtro'></form>
         <ul>
           {% for park in content %}
             <li>{{park|safe}}</li>

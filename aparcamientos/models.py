@@ -11,9 +11,9 @@ class Aparcamientos (models.Model):
     direccion = models.CharField(max_length=60)
     barrio = models.CharField(max_length=20)
     distrito = models.CharField(max_length=20)
-    lat = models.FloatField()
-    lon = models.FloatField()
-    nComen = models.IntegerField()
+    latitud = models.FloatField()
+    longitud = models.FloatField()
+    numComentarios = models.IntegerField()
     email = models.CharField(max_length=50, default="something")
     telefono = models.IntegerField()
 
