@@ -1,0 +1,51 @@
+{% extends 'index.html' %}
+
+  {% block content%}
+    <!-- PARKINGS ELEGIDOS -->
+    <div class="article">
+        <h2 class="Aparcamiento"><span>Info Aparcamiento</span></h2>
+        <ul>
+            <li><strong>Nombre: </strong> {{aparcamiento.nombre}}</li>
+            <li><strong>Dirección: </strong> {{aparcamiento.direccion}}</li>
+            <li><strong>Accesibilidad: </strong> {{aparcamiento.accesibilidad}}</li>
+            <li><strong>Latitud: </strong> {{aparcamiento.latitud}}</li>
+            <li><strong>Longitud: </strong> {{aparcamiento.longitud}}</li>
+            <li><strong>Barrio: </strong> {{aparcamiento.barrio}}</li>
+            <li><strong>Distrito: </strong> {{aparcamiento.distrito}}</li>
+            <!--<li><strong>Descripción: </strong> {{aparcamiento.descripcion}}</li>-->
+            <br>
+            <li><strong>Tlfno. Contacto: </strong> {{aparcamiento.telefono}}</li>
+            <li><strong>Email Contacto: </strong> {{aparcamiento.email}}</li>
+            <br>
+        </ul>
+    </div>
+    <hr class="noscreen" />
+  {% endblock content %}
+
+
+
+  {% block datos %}
+    <div id="col-in">
+        <!-- XML y Accesibilidad -->
+        <h3><span>{{boton|safe}}</span></h3> <!-- SE IGNORA. NO QUIERO BOTON AQUI -->
+
+        <div id="about-me">
+            <p><strong>GET PARKINGS</strong></p>
+            <p>Vista en XML<br></p>
+        </div> <!-- /about-me -->
+
+        <hr class="noscreen" />
+
+
+
+        <!-- Category -->
+        <h3 ><span>PÁGINAS PERSONALES</span></h3>
+        <ul id="category">
+          {% for pagina in datos %}
+            <!--<li id="category-active">{{pagina|safe}}</li> -->
+            <li>{{pagina|safe}}</li>
+          {% endfor %}
+        </ul>
+        <hr class="noscreen" />
+    </div> <!-- /col-in -->
+  {% endblock datos %}

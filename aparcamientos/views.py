@@ -55,7 +55,7 @@ def form(tipo, info, info2): #formularios, botones, texto y desplegable
     elif tipo == "accesible2": #con value = Comentados, indicando que vuelva a mostrar todo
         out = "<form method='POST'><button type='submit' name='boton' value='COMENTADOS'>Todos</button><form>"
 
-    elif tipo == "tituloPersonal":
+    elif tipo == "cambiarTitulo":
         out = "<form id='formularioTitulo' action='/" + info + "' method='POST'>" \
             + "Nombre de pagina personal<br><input type='text' name='Titulo'>" \
             + "<input type='submit' value='Enviar'></form>"
@@ -66,14 +66,17 @@ def form(tipo, info, info2): #formularios, botones, texto y desplegable
     elif tipo == "nodata":
         out = "No hay aparcamientos. Pulse sobre el botón 'Obtener datos'"
 
-    elif (tipo == "comentados"):
+    elif tipo == "comentados":
         out = "Aparcamientos mas comentados"
 
-    elif (tipo == "accesible"):
+    elif tipo == "parkAccesibles":
         out = "Aparcamientos accesibles"
 
-    elif (tipo == "no_parks"):
+    elif tipo == "no_parks":
         out = "No hay Aparcamientos en la base de datos. CaRGALOS"
+
+    elif tipo == "comentario":
+        out = "<form method='POST'> Comentario <br><input type='text' id='Comentarios'  size=32 name='Comentario'><input type='submit' value='Comentar'></form>"
 
     return out
 
@@ -87,11 +90,11 @@ def listado(lista, request, nick): #listado con todos los aparcamientos seleccio
         if request.user.is_authenticated(): #parte privada (con boton add)
             content.append("<a class='info' href='" + aux.url + "'> " + aux.nombre + "</a><br>" \
                 + "Direccion: " + aux.direccion + "<br>" \
-                + "<a class='info' href='/aparcamientos/" + aux.nombre + "'>Mas informacion...</a><br>"+ form("add", request.user.username, str(aux.id)) + "<br>")
+                + "<a class='info' href='/aparcamientos/" + str(aux.id) + "'>Mas informacion...</a><br>"+ form("add", request.user.username, str(aux.id)) + "<br>")
         else: #parte publica (sin boton add)
             content.append("<a class='info' href='" + aux.url + "'> " + aux.nombre + "</a><br>" \
                 + "Direccion: " + aux.direccion + "<br>" \
-                + "<span class='info'><a class='info' href='/aparcamientos/" + aux.nombre + "'> Mas Info</a></span><br>")
+                + "<span class='info'><a class='info' href='/aparcamientos/" + str(aux.id) + "'> Mas Info</a></span><br>")
     return content
 #-------------------------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------------------------
@@ -127,7 +130,7 @@ def crearPagPersonales(): #crea las paginas personales asociadas a cada usuario 
 @csrf_exempt
 def home(request): #pagina principal
     if request.method == "GET": #Ordenamos por aparcamientos mas comentados
-        titulo = form("comentados","","")
+        titulo = form("comentados","","") #aparcamientos mas comentados
         boton = form("accesible","","")
         parkings = Aparcamientos.objects.all() #con all no tenemos excepcion!
 
@@ -137,8 +140,6 @@ def home(request): #pagina principal
           content = form("nodata")
 
         else:
-          titulo = form("comentados", "", "")
-          boton = form("accesible","","")
           parkingsOrdenados = parkings.order_by('-numComentarios')[:5] #solo mostramos los 5 primeros
           content = listado(parkingsOrdenados, request, request.user) #listado de parkings
 
@@ -146,14 +147,14 @@ def home(request): #pagina principal
         valor = request.POST ['boton']
 
         if valor == "ACCESIBLES": #Aparcamientos accesibles
-            titulo = form("accesible")
+            titulo = form("parkAccesibles","","") #aparcamientos accesibles
             boton = form("accesible2","","") #pasamos a mostrar boton de "ir a mas comentados"
             parkings = Aparcamientos.objects.filter(accesibilidad=1)
             parkingsAccesibles = parkings.order_by('numComentarios')
             content = listado(parkingsAccesibles, request, request.user) #listado de parkings accesibles
 
         elif valor == "COMENTADOS": #Aparcamientos mas comentados
-            titulo = form("comentados")
+            titulo = form("comentados", "", "")
             boton = form("accesible","","") #pasamos a mostrar de nuevo boton de "ir a accesibles"
             parkings = Aparcamientos.objects.all()
             parkingsOrdenados = parkings.order_by('-numComentarios')[:5]
@@ -228,27 +229,76 @@ def aparcamientosPS(request): #lista de parkings totales (no se especifica que s
 @csrf_exempt
 def gestionUsuario(request, nick): #Pagina a la que nos dirigimos tras hacer /user
 
-    if request.method == 'POST': #entramos por "ADD" o por "CAMBIAR TITULO", añadimos PARKING, formamos user.html
-        addPOST(request)
-        userObject = User.objects.get(username=nick) #estos usuarios siempre deberian existir no????? objeto de tipo "User"
-        content, titulo, formulario = htmlUser(request,userObject) #formamos user.html
-        #return redirect(seleccionPersonal,str(request.user))
-
-
     if request.method == 'GET': #entramos aqui tras haber clickeado en el enlace lateral
         try: #por si ponemos /usuario_el_que_sea a mano en la barra de direcciones
             userObject = User.objects.get(username=nick)
-            content, titulo, formulario = htmlUser(request, userObject) #formamos user.html
+            paginaPersonalUnica = Personal.objects.get(creador=userObject)
+
+            #Formulario para cambiar titulo? --> Solo si usuario que request es el creador de la pagPersonal
+            formulario = ""
+            if request.user.username == str(userObject):
+                formulario = form("cambiarTitulo",request.user.username,"") #Form para cambiar titulo
+
+            #Titulo de pagina personal
+            if paginaPersonalUnica.titulo == "":
+                titulo = "Pagina de " + str(userObject) # "Pagina de "nick""
+            else:
+                titulo = paginaPersonalUnica.titulo # "Nombre de la pagina personal chulo"
+
+
+
+            aparcamientosTot = Seleccionar.objects.filter(FichaPersonal=paginaPersonalUnica) #Objeto "Personal"
+            content = [] #porsiaca! referenciado antes de asignar error posible!!
+            for aux in aparcamientosTot:
+                aparcamiento = aux.Aparcamiento #dentro de objeto "Personal", especificamos que queremos un objeto "Aparcamiento"
+
+                seleccion = Seleccionar.objects.get(Aparcamiento=aparcamiento,Usuario=userObject)
+                if request.user.is_authenticated():
+                    content.append ("<a class='info' href='" + aparcamiento.url + "'> " + aparcamiento.nombre + "</a><br>" \
+                        + "Direccion: " + aparcamiento.direccion + "<br>" \
+                        + "<a class='info' href='/aparcamientos/" + str(aparcamiento.id) + "'> Mas Info</a><br>" \
+                        + "<span class='info'><span class='date'> Fecha Seleccion: " + str(seleccion.Fecha) + "</span></span><br>")
+                else:
+                    content.append("<a class='info' href='" + aparcamiento.url + "'> " + aparcamiento.nombre + "</a><br>" \
+                        + "Direccion: " + aparcamiento.direccion + "<br>" \
+                        + "<a class='info' href='/aparcamientos/" + str(aparcamiento.id) + "'> Mas Info</a><br>" \
+                        + "<span class='info'><span class='date'> Fecha Seleccion: " + str(seleccion.Fecha) + "</span></span>")
 
         except User.DoesNotExist: #Error tratado
-            content = "NO EXISTE EL USUARIO " + str(nick)
+            content = "No existe el usuario " + str(nick) + ". Intento de ruptura."
             template = get_template('user.html')
             Context = ({'log': logInOut(request),
                         'enlaces': linksOther(),
                         'content': content})
             return HttpResponseNotFound(plantilla.render(Context))
 
+    #-------------------------------------------------------------------------------------------------------
+    elif request.method == 'POST': #entramos por "ADD" o por "CAMBIAR TITULO", añadimos PARKING, formamos user.html
+        value = request.POST['Titulo']
 
+        if value == 'Titulo': #cambiamos titulo de la pagina personal
+            pagina = PaginaPersonal.objects.get(usuario=usuario)
+            pagina.Titulo = value
+            pagina.save()
+
+        elif value == 'Add': #se trata del boton añadir aparcamiento
+            paginaPersonalUnica = Personal.objects.get(usuario=usuario)
+            parking = Aparcamientos.objects.get(id=int(value))
+            add = True
+            listaParkings = Seleccionar.objects.filter(Usuario=usuario)
+            for i in listaParkings:
+                if i.Aparcamiento.nombre == parking.nombre:
+                    add = False
+                    break
+            if add == True:
+                addParking = Seleccionar(Aparcamiento=parking, Usuario=usuario, FichaPersonal=paginaPersonalUnica)
+                addParking.save()
+
+
+        return redirect (gestionUsuario, str(request.user))
+
+
+    #-------------------------------------------------------------------------------------------------------
     #Renderizamos user.html
     template = get_template('user.html')
     Context = ({'log': logInOut(request),
@@ -261,78 +311,61 @@ def gestionUsuario(request, nick): #Pagina a la que nos dirigimos tras hacer /us
 
 
 
-#--/USER.HTML-----------------------------------------------------------------------------------------------
-def htmlUser(request, userObject): #genera un html para /user
-
-    paginaPersonalUnica = Personal.objects.get(creador=userObject)
-    aparcamientosTot = Seleccionar.objects.filter(FichaPersonal=paginaPersonalUnica) #Objeto "Personal"
-    content = "" #porsiaca! referenciado antes de asignar error posible!!
-    for aux in aparcamientosTot:
-        aparcamiento = aux.Aparcamiento #dentro de objeto "Personal", especificamos que queremos un objeto "Aparcamiento"
-        #content.append(listado(aparcamiento,request, 1, userObject))
-
-        seleccion = Seleccionar.objects.get(Aparcamiento=aparcamiento,Usuario=userObject)
-        if request.user.is_authenticated():
-            content = "<a class='info' href='" + aparcamiento.url + "'> " + aparcamiento.nombre + "</a><br>" \
-                + "Direccion: " + aparcamiento.direccion + "<br>" \
-                + "<a class='info' href='/aparcamientos/" + aparcamiento.nombre + "'> Mas Info</a><br>" \
-                + "<span class='info'><span class='date'> Fecha Seleccion: " + str(seleccion.Fecha) + "</span></span><br>"
-        else:
-            content = "<a class='info' href='" + aparcamiento.url + "'> " + aparcamiento.nombre + "</a><br>" \
-                + "Direccion: " + aparcamiento.direccion + "<br>" \
-                + "<a class='info' href='/aparcamientos/" + aparcamiento.nombre + "'> Mas Info</a><br>" \
-                + "<span class='info'><span class='date'> Fecha Seleccion: " + str(seleccion.Fecha) + "</span></span>"
-
-
-        #Usuario que visita es el creador de la pagina personal?
-        formulario = ""
-        if request.user.username == str(userObject):
-            formulario = form("tituloPersonal",request.user.username,"")
-
-        if paginaPersonalUnica.titulo == "":
-            titulo = "Pagina de " + str(userObject)
-        else:
-            titulo = paginaPersonalUnica.titulo
-
-        return(content, titulo, formulario)
-#-------------------------------------------------------------------------------------------------
-
-# #AÑADIR APARCAMIENTO-----------------------------------------------------------------------------------------
-# def addPOST(request): #Añade aparcamiento pulsado el boton "add"
-#     #Procesa el POST que haremos sobre /(usuario)
-#     #Y SI PROBAMOS A HACER LO DE : VALUE = REQUEST.POST [NAME, O LO QUE SEA]
-#     keyPost, valuePost = request.body.decode('utf-8').split("=")
-#     print(valuePost)
-#     #Antes de nada comprobaremos si existe la pagina, si no, la creamos
-#     usuario = User.objects.get(username=str(request.user))
-#     try:
-#         PaginaPersonal.objects.get(usuario=usuario)
-#     except PaginaPersonal.DoesNotExist:
-#         nuevaPagina = PaginaPersonal(Titulo="", usuario=usuario)
-#         nuevaPagina.save()
-#     #Comprobamos si se esta haciendo un POST para añadir aparcamiento o para modificar el titulo de nuestra paginaPersonalUnica
-#     if keyPost == 'Add':
-#         paginaPersonalUnica = PaginaPersonal.objects.get(usuario=usuario)
-#         parking = Aparcamientos.objects.get(id=int(valuePost))
-#         añadir = True
-#         listaParkings = Seleccionar.objects.filter(Usuario=usuario)
-#         for i in listaParkings:
-#             if i.Aparcamiento.nombre == parking.nombre:
-#                 añadir = False
-#                 break
-#         if añadir == True:
-#             adiccion = Seleccionar(Aparcamiento=parking, Usuario=usuario, FichaPersonal=paginaPersonalUnica)
-#             adiccion.save()
-#     elif keyPost == 'Titulo':
-#         pagina = PaginaPersonal.objects.get(usuario=usuario)
-#         pagina.Titulo = unquote_plus(valuePost)
-#         pagina.save()
-
 
 #PAGINA PERSONAL DE CADA APARCAMIENTO-------------------------------------------------------------
-def infoAparcamiento(request):
-    plantilla = get_template('aparcamientos.html')
-    return HttpResponse(plantilla.render(Context))
+def infoAparcamiento(request, id):
+
+    if request.method == "GET":
+        try:
+            aparcamiento = Aparcamientos.objects.get(id=id)
+        except Aparcamientos.DoesNotExist:
+            template = get_template("infoAparcamiento.html")
+            content = "No existe dicho aparcamiento. Intento de ruptura."
+            Context = ({'login': logInOut(request),
+                        'enlaces': linksOther(),
+                        'content': content})
+            return HttpResponseNotFound(template.render(Content))
+
+    elif request.method == "POST": #añadimos comentario y sumamos contador
+        comentario = request.POST['texto']
+
+        aparcamiento = Aparcamientos.objects.get(id=id)
+        aparcamiento.numComentarios = aparcamiento.numComentarios + 1
+        aparcamiento.save()
+
+        nuevo = Comentarios(Aparcamiento=aparcamiento, Comentario=comentario)
+        nuevo.save()
+
+
+    #CAJA para comentar SI o NO------------
+    if request.user.is_authenticated():
+        formulario = form("comentario", "", "")
+    else:
+        formulario = ""
+    #--------------------------------------
+
+    #Preparamos los valores del context para renderizar-----------------------
+    aparcamiento = Aparcamientos.objects.get(id=id)
+
+    content=[]
+    try:
+        comentariosTot = Comentario.objects.filter(aparcamiento=aparcamiento)
+        # htmlComentarios = "<h4 id='comments'><span>Comentarios</span></h4><ul>"
+        for aux in comentariosTot:
+            content.append(aux.texto)
+            #"<li class='comments'>" + i.Comentario + "</li></ul><br>"
+    except Comentario.DoesNotExist:
+        content.append  ("No hay comentarios.")
+
+    #Renderizamos aparcamientosInfo.html
+    template = get_template('infoAparcamiento.html')
+    Context = ({'log': logInOut(request),
+                'links': linksOther(),
+                'content': content,
+                'datos' : paginasUsers(), #paginas personales laterales,
+                'form': formulario,
+                'aparcamiento': aparcamiento})
+    return HttpResponse(template.render(Context))
 
 
 
@@ -361,7 +394,8 @@ def loginPS(request):
         return redirect(home)
 
     else: #Nick o pass incorrectos
-        content = "Usuario o contraseña incorrectos. <a href ='/'> Prueba de nuevo </a>"
+        content=[]
+        content.append( "Usuario o contraseña incorrectos. <a href ='/'> Prueba de nuevo </a>")
 
         template = get_template("home.html") #cambia el content de home.html
         c = Context ({'content': content,
