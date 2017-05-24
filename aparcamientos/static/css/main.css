@@ -13,7 +13,7 @@
 
 {% load static %}
 * {min-height:1px;}
-body {border:0; margin:0; padding:0; background:#F2F5FE url("../images/bg.gif") 0 0 repeat-x; font:70%/160% "verdana",sans-serif; color:#192666; _text-align:center;}
+body {border:0; margin:0; padding:0; background:#F2F5FE url("../images/bg.gif") 0 0 repeat-x; font:70%/160% "verdana",sans-serif; _text-align:center;}
 
 a {color:#192666;}
 a:hover {color:#4F6AD7;}
@@ -34,7 +34,7 @@ tr {display:table-row;}
 th, td {display: table-cell; border:1px solid #B7CAF6; margin:0; padding:5px; vertical-align:top; text-align:left;}
 th {background:#E7ECFD; text-align:center; color:#192666; font-weight:bold;}
 
-
+/* ul, ol {display:block; border:0; margin:15px 0 15px 40px; padding:0;} */
 ol {list-style-type:decimal;}
 li {display:list-item; border:0; margin:0; padding:0; _height:1px;}
 ul ul, ul ol, ol ol, ol ul {margin: 0 0 0 20px;}

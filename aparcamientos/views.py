@@ -58,11 +58,6 @@ def form(tipo, info, info2): #formularios, botones, texto y desplegable
     elif tipo == "accesible2": #con value = Comentados, indicando que vuelva a mostrar todo
         out = "<form method='POST'><button type='submit' name='boton' value='COMENTADOS'>Todos</button><form>"
 
-    elif tipo == "cambiarTitulo":
-        out = "<form id='formularioTitulo' action='/" + info + "' method='POST'>" \
-            + "Nombre de pagina personal<br><input type='text' name='Titulo'>" \
-            + "<input type='submit' value='Enviar'></form>"
-
     elif tipo == "getdata":
         out = "<form method='POST'><button type='submit' name='boton' value='OBTENER'>Obtener Datos</button></form>"
 
@@ -78,6 +73,16 @@ def form(tipo, info, info2): #formularios, botones, texto y desplegable
 
     elif tipo == "comentario":
         out = "<form method='POST'> Comentario <br><input type='text' id='Comentarios'  name='Comentario'  ><input type='submit' value='Comentar'></form>"
+
+    elif tipo == "xml":
+        out = "<a href='" + info + "/xml'>" + info + "</a>"
+
+    elif tipo == "css":
+        out = "<form id='formularioCss' action='/" + info + "' method='POST'>" \
+            + "Color <br><input type='color' name='Color' value='#ff0000'><br><br>" \
+            + "Tipo de letra<br><input type='radio' name='Size' value='Normal' checked> Short<br>" \
+            +  "<input type='radio' name='Size' value='Grande'> Medium<br>" \
+            + "<input type='submit' value='Enviar'></form>"
 
     return out
 
@@ -201,7 +206,6 @@ def aparcamientosPS(request): #lista de parkings totales (no se especifica que s
 
         elif request.method == 'POST': #Buscador por distrito
             distrito = request.POST['Distrito']
-            #print(Distrito)
             parks = Aparcamientos.objects.filter(distrito=distrito)
 
             content=[]
@@ -239,10 +243,11 @@ def gestionUsuario(request, nick): #Pagina a la que nos dirigimos tras hacer /us
             userObject = User.objects.get(username=nick)
             paginaPersonalUnica = Personal.objects.get(creador=userObject)
 
-            #Formulario para cambiar titulo? --> Solo si usuario que request es el creador de la pagPersonal
+            #Formulario para cambiar titulo/css? --> Solo si usuario que request es el creador de la pagPersonal
             formulario = ""
+            formularioCss = ""
             if request.user.username == str(userObject):
-                formulario = form("cambiarTitulo",request.user.username,"") #Form para cambiar titulo
+                formularioCss = form("css", request.user.username, "")
 
             #Titulo de pagina personal
             if paginaPersonalUnica.titulo == "":
@@ -280,8 +285,6 @@ def gestionUsuario(request, nick): #Pagina a la que nos dirigimos tras hacer /us
 
     #-------------------------------------------------------------------------------------------------------
     elif request.method == 'POST': #entramos por "ADD" o por "CAMBIAR TITULO", añadimos PARKING, formamos user.html
-        # value = request.POST['Add']
-        # value2 = request.POST['Titulo']
 
         if 'Add' in request.POST:
             paginaPersonalUnica = Personal.objects.get(creador=request.user)
@@ -296,10 +299,20 @@ def gestionUsuario(request, nick): #Pagina a la que nos dirigimos tras hacer /us
                 addParking = Seleccionar(aparcamiento=parking, usuario=request.user, fichaPersonal=paginaPersonalUnica)
                 addParking.save()
 
-        else : #cambiamos titulo de la pagina personal
+        elif 'Titulo' in request.POST: #cambiamos titulo de la pagina personal
             pagina = Personal.objects.get(creador=request.user)
             pagina.titulo = request.POST['Titulo']
             pagina.save()
+
+        elif 'Color' in request.POST: #CSS dinamico
+            color = request.POST['Color']
+            letra = request.POST['Size']
+
+            usuario = User.objects.get(username=request.user)
+            css = Personal.objects.get(creador=usuario)
+            css.color = color
+            css.letra = letra
+            css.save()
 
 
         return redirect (gestionUsuario, str(request.user))
@@ -313,7 +326,9 @@ def gestionUsuario(request, nick): #Pagina a la que nos dirigimos tras hacer /us
                 'titulo': titulo,
                 'content': content,
                 'datos' : paginasUsers(), #paginas personales laterales,
-                'form': formulario})
+                'xml' : form("xml", nick, ""),
+                'formcss' : formularioCss,
+                'usuario' : request.user}) #para javascript
     return HttpResponse(template.render(Context))
 
 
@@ -381,14 +396,12 @@ def parserXML():
     arbol = ET.parse(xmlFile)
     raiz = arbol.getroot()
 
-    for elem in arbol.iter():
-        if "ID-ENTIDAD" in elem.attrib.values():   # Es un diccionario
+    for elem in arbol.iter(): #recorremos el arbol --> hago pass a los elementos que no me interesan, aunque esta bien tratarlos
+        if "ID-ENTIDAD" in elem.attrib.values():
             pass
-            #nuevoAparcamiento = Aparcamientos(idEntidad=elem.text)
         elif "NOMBRE" in elem.attrib.values():
             nuevoAparcamiento = Aparcamientos(nombre=elem.text)
             nuevoAparcamiento.numComentarios = 0
-            #nuevoAparcamiento.nombre = elem.text
         elif "DESCRIPCION" in elem.attrib.values():
             nuevoAparcamiento.descripcion = elem.text
         elif "ACCESIBILIDAD" in elem.attrib.values():
@@ -397,38 +410,30 @@ def parserXML():
             nuevoAparcamiento.url = elem.text
         elif "NOMBRE-VIA" in elem.attrib.values(): #nombre de la calle
             nombreCalle = elem.text
-            #nuevoAparcamiento.nombreVia = elem.text
+            nombreCalle = "C/" + nombreCalle
+            nuevoAparcamiento.direccion = elem.text
         elif "CLASE-VIAL" in elem.attrib.values(): #calle, avenida, paseo
-            tipoCalle = elem.text
-            #nuevoAparcamiento.claseVial = elem.text
+            tipoCalle = elem.text #lo ignoramos un poco
         elif "TIPO-NUM" in elem.attrib.values():
             pass
-            #nuevoAparcamiento.tipoNum = elem.text
         elif "NUM" in elem.attrib.values():
             pass
-            #nuevoAparcamiento.num = elem.text
         elif "ORIENTACION" in elem.attrib.values():
             pass
-            #nuevoAparcamiento.orientacion = elem.text
         elif "LOCALIDAD" in elem.attrib.values():
             pass
-            #nuevoAparcamiento.localidad = elem.text
         elif "PROVINCIA" in elem.attrib.values():
             pass
-            #nuevoAparcamiento.provincia = elem.text
         elif "CODIGO-POSTAL" in elem.attrib.values():
             pass
-            #nuevoAparcamiento.codigoPostal = elem.text
         elif "BARRIO" in elem.attrib.values():
             nuevoAparcamiento.barrio = elem.text
         elif "DISTRITO" in elem.attrib.values():
             nuevoAparcamiento.distrito = elem.text
         elif "COORDENADA-X" in elem.attrib.values():
             pass
-            #nuevoAparcamiento.coordenadaX = elem.text
         elif "COORDENADA-Y" in elem.attrib.values():
             pass
-            #nuevoAparcamiento.coordenadaY = elem.text
         elif "LATITUD" in elem.attrib.values():
             nuevoAparcamiento.latitud = elem.text
         elif "LONGITUD" in elem.attrib.values():
@@ -442,6 +447,46 @@ def parserXML():
         else:
             pass
 
+
+
+#CSS DINAMICO------------------------------------------------------------------------------------------
+def userCss(request):
+    if request.user.is_authenticated(): #necesitamos saber si esta logueado, si lo esta tiene pagPersonal
+        usuario = User.objects.get(username=request.user)
+        tipo = Personal.objects.get(creador=usuario) #para cambiar color y letra
+
+        #if tipo.color == "" or tipo.letra == "":
+        color = "#192666"
+        tamano = "5mm"
+    else:
+        color = "#192666"
+        tamano = "5mm"
+
+    plantillaCSS = get_template('personal.css')
+    Context = ({'color': Color,
+                'tamaño': tamano})
+    return HttpResponse(plantillaCSS.render(Context),content_type="text/css")
+
+
+
+#XML USER----------------------------------------------------------------------------------------------
+def userXml(request, nick): #enviamos datos a nuestro fichero xml (por comodidad) -- ahorro de espacio aqui
+    template = get_template('userdd.xml')
+    usuario = User.objects.get(username=nick)
+    parkingsTot = Seleccionar.objects.filter(usuario=usuario)
+
+    context = ({'nick': nick,
+                'parks': parkingsTot})
+    return HttpResponse(template.render(context), content_type="text/xml")
+
+
+
+#HTML5 (AUDIOS)----------------------------------------------------------------------------------------
+def multimediaPS(request):
+    plantilla = get_template("multimedia.html")
+    Context = ({'log': logInOut(request),
+                'links': linksOther()})
+    return HttpResponse(plantilla.render(Context))
 
 
 #ABOUT-------------------------------------------------------------------------------------------------

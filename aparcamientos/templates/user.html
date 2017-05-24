@@ -4,7 +4,13 @@
     <!-- PARKINGS ELEGIDOS -->
     <div class="article">
         <h2 class="TituloUserPage"><span>{{titulo|safe}}</span></h2>
-        {{form|safe }}
+        <!-- {{form|safe }} -->
+        <!-- USO DE JAVASCRIPT EN FUNCION CAMBIAR NOMBRE -->
+        <form name="myForm" action="/{{usuario}}" onsubmit="return validateForm()" method="post">
+          Name: <input type="text" name="Titulo"> <input type="submit" value="Submit">
+        </form>
+        <!-- ........................................... -->
+
         <p><span class="cat">
           <ul>
             {% for list in content %}
@@ -25,8 +31,9 @@
         <h3><span>{{boton|safe}}</span></h3> <!-- SE IGNORA. NO QUIERO BOTON AQUI -->
 
         <div id="about-me">
-            <p><strong>Vista en JSON</strong></p>
-            <p>Vista en XML<br></p>
+            <p><strong>Get XML de {{xml|safe}}</strong></p>
+            <p><a href="/multimedia"><strong>MULTIMEDIA (HTML5)</strong></a></p>
+            <p>{{formcss|safe}}<br></p>
         </div> <!-- /about-me -->
 
         <hr class="noscreen" />

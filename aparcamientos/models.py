@@ -26,6 +26,8 @@ class Comentario(models.Model):
 class Personal(models.Model):
     creador = models.OneToOneField(User)
     titulo = models.CharField(max_length=60)
+    letra = models.CharField(max_length=50, blank=True)
+    color = models.CharField(max_length=50, blank=True)
 
 class Seleccionar (models.Model):
     aparcamiento = models.ForeignKey(Aparcamientos)

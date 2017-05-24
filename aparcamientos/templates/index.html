@@ -15,9 +15,27 @@
     <meta name="keywords" content="..." />
 
     <link rel="index" href="./" title="Home" />
+    <!-- <link rel="stylesheet" href="css/personal.css" type="text/css"/> -->
     <link rel="stylesheet" media="screen,projection" type="text/css" href="{% static "css/main.css" %}" />
     <link rel="stylesheet" media="print" type="text/css" href="{% static "css/print.css" %}" />
     <link rel="stylesheet" media="aural" type="text/css" href="{% static "css/aural.css" %}" />
+
+    <!-- FAVICON.ICO -->
+    <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/png"/>
+
+    <!-- USO DE JAVASCRIPT (para cambiar nombre de pagina personal) -->
+    <script>
+      function validateForm() {
+        var x = document.forms["myForm"]["Titulo"].value;
+        if (x == "") {
+          alert("Name must be filled out");
+          return false;
+        }
+      }
+    </script>
+    <!-- ......................................................... -->
+
+
 </head>
 
 <body id="www-url-cz">

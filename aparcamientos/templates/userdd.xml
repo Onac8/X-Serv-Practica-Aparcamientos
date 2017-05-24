@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+    <parkingsTotales>
+
+        <title> Versión XML del canal de {{ nick }}</title>
+
+        {% for park in parks %}
+        
+            <aparcamiento>
+                <nombre>{{ park.aparcamiento.nombre }}</nombre>
+                <descripcion>{{ park.aparcamiento.descripcion }}</descripcion>
+                <url>{{ park.aparcamiento.url }}</url>
+                <accesibilidad>{{ park.aparcamiento.accesibilidad }}</accesibilidad>
+                <direccion>{{ park.aparcamiento.direccion }}</direccion>
+                <barrio>{{ park.aparcamiento.barrio }}</barrio>
+                <distrito>{{ park.aparcamiento.distrito }}</distrito>
+                <latitud>{{ park.aparcamiento.latitud }}</latitud>
+                <longitud>{{ park.aparcamiento.longitud }}</longitud>
+                <email>{{ park.aparcamiento.email }}</email>
+                <telefono>{{ park.aparcamiento.telefono }}</telefono>
+            </aparcamiento>
+
+        {% endfor %}
+    </parkingsTotales>
