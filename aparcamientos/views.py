@@ -77,6 +77,10 @@ def form(tipo, info, info2): #formularios, botones, texto y desplegable
     elif tipo == "xml":
         out = "<a href='" + info + "/xml'>" + info + "</a>"
 
+    elif tipo == "titulo":
+        out = "<form name='myForm' action='/" + info + "' onsubmit='return validateForm()' method='post'>" \
+            + "Name: <input type='text' name='Titulo'> <input type='submit' value='Submit'></form>"
+
     elif tipo == "css":
         out = "<form id='formularioCss' action='/" + info + "' method='POST'>" \
             + "Color <br><input type='color' name='Color' value='#ff0000'><br><br>" \
@@ -144,13 +148,14 @@ def home(request): #pagina principal
         parkings = Aparcamientos.objects.all() #con all no tenemos excepcion!
 
         if len(parkings) == 0:
-          titulo = ""
-          boton = form("getdata", "", "") #boton para bajarse los datos XML
-          content = form("nodata","","")
+            titulo = ""
+            boton = form("getdata", "", "") #boton para bajarse los datos XML
+            content = form("nodata","","")
 
         else:
-          parkingsOrdenados = parkings.order_by('-numComentarios')[:5] #solo mostramos los 5 primeros
-          content = listado(parkingsOrdenados, request, request.user) #listado de parkings
+            parkingsOrdenados = Aparcamientos.objects.filter(numComentarios__gt = 0)
+            parkingsOrdenados = parkingsOrdenados.order_by('-numComentarios')[:5] #solo mostramos los 5 primeros
+            content = listado(parkingsOrdenados, request, request.user) #listado de parkings
 
     elif request.method == 'POST': #aqui tratamos solo el post del boton accesibles
         valor = request.POST ['boton']
@@ -248,6 +253,7 @@ def gestionUsuario(request, nick): #Pagina a la que nos dirigimos tras hacer /us
             formularioCss = ""
             if request.user.username == str(userObject):
                 formularioCss = form("css", request.user.username, "")
+                formulario = form("titulo", nick, "")
 
             #Titulo de pagina personal
             if paginaPersonalUnica.titulo == "":
@@ -328,7 +334,7 @@ def gestionUsuario(request, nick): #Pagina a la que nos dirigimos tras hacer /us
                 'datos' : paginasUsers(), #paginas personales laterales,
                 'xml' : form("xml", nick, ""),
                 'formcss' : formularioCss,
-                'usuario' : request.user}) #para javascript
+                'form': formulario}) #para javascript
     return HttpResponse(template.render(Context))
 
 
