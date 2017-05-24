@@ -2,22 +2,25 @@
 
   {% block content%}
     <div class='about'>
+      <p><strong>Algunos ejemplos de archivos multimedia soportados por html5</strong></p>
+      <br><br><p>Archivos de audio</p>
+      <p>Formula 1 [.mp3]-->
+        <audio controls>
+          <source src="/multimedia/formula1.mp3" type="audio/mpeg">
+        </audio>
+      </p>
 
-    <p><strong>Algunos ejemplos de archivos multimedia soportados por html5</strong></p>
-    <br><p>Archivos de audio</p>
-    <p>Formula 1 [.mp3]-->
-      <audio controls>
-        <source src="aparcamientos/templates/multimedia/formula1.mp3" type="audio/mp3"/>
-      </audio>
-    </p>
+      <p>Coche [.wav]-->
+        <audio controls>
+          <source src="/multimedia/bmw.wav" type="audio/wav">
+        </audio>
+      </p><br><br>
 
-    <p>Coche [.wav]-->
-      <audio controls>
-        <source src="aparcamientos/templates/multimedia/bmw.wav" type="audio/wav" />
-      </audio>
-    </p><br><br>
-
-
-
-
+      <p>Parking [.mp4]-->
+        <video width="320" height="240" controls>
+          <source src="/multimedia/parking.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </p>
+    </div>
   {% endblock content %}

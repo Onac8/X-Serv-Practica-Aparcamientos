@@ -77,9 +77,11 @@ def form(tipo, info, info2): #formularios, botones, texto y desplegable
     elif tipo == "xml":
         out = "<a href='" + info + "/xml'>" + info + "</a>"
 
+    #USO DE JAVASCRIPT----------------------------------------------------
     elif tipo == "titulo":
         out = "<form name='myForm' action='/" + info + "' onsubmit='return validateForm()' method='post'>" \
-            + "Name: <input type='text' name='Titulo'> <input type='submit' value='Submit'></form>"
+            + "Name: <input type='text' name='Titulo'> <input type='submit' value='Submit' onclick = 'myFunction()'></form>"
+    #---------------------------------------------------------------------
 
     elif tipo == "css":
         out = "<form id='formularioCss' action='/" + info + "' method='POST'>" \
@@ -154,8 +156,12 @@ def home(request): #pagina principal
 
         else:
             parkingsOrdenados = Aparcamientos.objects.filter(numComentarios__gt = 0)
-            parkingsOrdenados = parkingsOrdenados.order_by('-numComentarios')[:5] #solo mostramos los 5 primeros
-            content = listado(parkingsOrdenados, request, request.user) #listado de parkings
+            if len(parkingsOrdenados) == 0:
+                titulo = "No hay aparcamientos comentados"
+                content = []
+            else:
+                parkingsComentadosOrdenados = parkingsOrdenados.order_by('-numComentarios')[:5] #solo mostramos los 5 primeros
+                content = listado(parkingsComentadosOrdenados, request, request.user) #listado de parkings
 
     elif request.method == 'POST': #aqui tratamos solo el post del boton accesibles
         valor = request.POST ['boton']
@@ -171,8 +177,13 @@ def home(request): #pagina principal
             titulo = form("comentados", "", "")
             boton = form("accesible","","") #pasamos a mostrar de nuevo boton de "ir a accesibles"
             parkings = Aparcamientos.objects.all()
-            parkingsOrdenados = parkings.order_by('-numComentarios')[:5]
-            content = listado(parkingsOrdenados,request, request.user) #listado de parkings
+            parkingsOrdenados = Aparcamientos.objects.filter(numComentarios__gt = 0)
+            if len(parkingsOrdenados) == 0:
+                titulo = "No hay aparcamientos comentados"
+                content = []
+            else:
+                parkingsOrdenados = parkingsOrdenados.order_by('-numComentarios')[:5] #solo mostramos los 5 primeros
+                content = listado(parkingsOrdenados,request, request.user) #listado de parkings
 
         elif valor == "OBTENER": #Post que nos llega al pulsar boton "Obtener Datos"
             parserXML()
